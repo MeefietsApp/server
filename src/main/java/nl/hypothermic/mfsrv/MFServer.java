@@ -7,6 +7,8 @@ import nl.hypothermic.mfsrv.resources.AuthResource;
 import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
+
+	public static final long SESSION_TIMEOUT = 300000; // ms
 	
 	private final Javalin instance;
 	private static final IResource[] resources = {(IResource) new AuthResource()};
