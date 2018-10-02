@@ -1,6 +1,7 @@
 package nl.hypothermic.mfsrv.database;
 
 import nl.hypothermic.mfsrv.obj.LoginResult;
+import nl.hypothermic.mfsrv.obj.TelephoneNum;
 
 public interface IDatabaseHandler {
 	
@@ -12,12 +13,12 @@ public interface IDatabaseHandler {
 	
 	// --- Authenticatie
 	
-	public LoginResult userLogin(String tel, int pin);
+	public LoginResult userLogin(TelephoneNum num, String passwdHash);
 	
-	public boolean isUserRegistered(String tel);
+	public boolean isUserRegistered(TelephoneNum num);
 	
-	public boolean isUserPassword(String tel, int pin);
+	public boolean isUserPassword(TelephoneNum num, String passwdHash);
 	
-	public boolean isSessionTokenValid(String tel, String token);
+	public boolean isSessionTokenValid(TelephoneNum num, String token);
 
 }
