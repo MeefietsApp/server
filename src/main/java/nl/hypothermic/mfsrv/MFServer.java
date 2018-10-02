@@ -14,14 +14,14 @@ import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
-	public static final long SESSION_TIMEOUT = 300000; // ms
+	public static final long SESSION_TIMEOUT = 15000; // ms // 300000
 
 	private final Javalin instance;
-	private static final IResource[] resources = {
-			(IResource) new AuthResource()
+	private final IResource[] resources = {
+			(IResource) new AuthResource(this)
 	};
 
-	private static final IDatabaseHandler database = new TempDatabase();
+	public final IDatabaseHandler database = new TempDatabase();
 	private final ConfigHandler cfg;
 
 	private static final AtomicInteger counter = new AtomicInteger();

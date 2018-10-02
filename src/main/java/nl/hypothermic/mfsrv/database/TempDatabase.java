@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
-import nl.hypothermic.mfsrv.obj.LoginResult;
+import nl.hypothermic.mfsrv.obj.SessionToken;
 import nl.hypothermic.mfsrv.obj.TelephoneNum;
 
 public class TempDatabase implements IDatabaseHandler {
@@ -53,35 +54,83 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 
-	private HashMap<TelephoneNum, Long> sessionList = new HashMap<TelephoneNum, Long>();
+	private HashMap<TelephoneNum, SessionToken> sessionList = new HashMap<TelephoneNum, SessionToken>();
 
-	@Override public LoginResult userLogin(TelephoneNum num, String passwdHash) {
+	@Override public int userLogin(TelephoneNum num, String passwdHash) {
+		int i;
+		if ((i = isUserLoggedIn(num)) != 0) {
+			return i;
+		}
 		if (!isUserRegistered(num)) {
-			return LoginResult.NOT_REGISTERED;
+			return -3;
 		}
 		if (!isUserPassword(num, passwdHash)) {
-			return LoginResult.INVALID_CREDS;
+			return -4;
 		}
 		if (sessionList.containsKey(num)) {
 			sessionList.remove(num);
 		}
-		sessionList.put(num, System.currentTimeMillis());
-		return LoginResult.SUCCESS;
+		SessionToken token = new SessionToken();
+		sessionList.put(num, token);
+		return token.token;
+	}
+	
+	@Override public int userRegister(TelephoneNum num, String passwdHash) {
+		if (isUserRegistered(num)) {
+			return -5;
+		}
+		userComboList.put(num, passwdHash);
+		return 1;
 	}
 
 	@Override public boolean isUserRegistered(TelephoneNum num) {
-		return userComboList.containsKey(num);
+		for (TelephoneNum iter : userComboList.keySet()) {
+			if (iter.country == num.country && iter.number == num.number) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override public boolean isUserPassword(TelephoneNum num, String passwdHash) {
-		return userComboList.get(num) == passwdHash;
+		for (TelephoneNum iter : userComboList.keySet()) {
+			if (iter.country == num.country && iter.number == num.number) {
+				return userComboList.get(iter).replaceAll("\n", "").trim().equals(passwdHash.replaceAll("\n", "").trim());
+			}
+		}
+		return false;
+	}
+	
+	/* -- */ public int isUserLoggedIn(TelephoneNum num) {
+		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
+			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
+				if (iter.getValue().isExpired()) {
+					sessionList.remove(iter.getKey());
+					return 0;
+				} else {
+					iter.getValue().resetTime();
+					return iter.getValue().token;
+				}
+			}
+		}
+		return 0;
 	}
 
-	@Override public boolean isSessionTokenValid(TelephoneNum num, String token) {
-		if (sessionList.containsKey(num)) {
-			return sessionList.get(num) + MFServer.SESSION_TIMEOUT > System.currentTimeMillis();
-		} else {
-			return false;
+	@Override public boolean isSessionTokenValid(TelephoneNum num, int token) {
+		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
+			if (iter.getKey().country == num.country && iter.getKey().number == num.number && iter.getValue().token == token) {
+				iter.getValue().resetTime();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override public void resetSessionTimer(TelephoneNum num) {
+		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
+			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
+				iter.getValue().resetTime();
+			}
 		}
 	}
 }
