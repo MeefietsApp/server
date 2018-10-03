@@ -47,6 +47,21 @@ public class AuthResource implements IResource {
 				}
 			}
 		});
+		instance.get("/auth/verify", new Handler() {
+			@Override public void handle(Context ctx) throws Exception {
+				if (ctx.queryParam("country") == null || ctx.queryParam("num") == null || ctx.queryParam("verifytoken") == null) {
+					ctx.result("-1");
+				} else {
+					try {
+						ctx.result(server.database.userVerify(new TelephoneNum(Integer.valueOf(ctx.queryParam("country")),
+								                                                 Integer.valueOf(ctx.queryParam("num"))),
+								                                Integer.valueOf((ctx.queryParam("verifytoken")))) + "");
+					} catch (NumberFormatException nfx) {
+						ctx.result("-2");
+					}
+				}
+			}
+		});
 		instance.get("/auth/sync", new Handler() {
 			@Override public void handle(Context ctx) throws Exception {
 				if (ctx.queryParam("country") == null || ctx.queryParam("num") == null || ctx.queryParam("token") == null) {

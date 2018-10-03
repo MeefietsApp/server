@@ -1,27 +1,32 @@
 package nl.hypothermic.mfsrv;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.javalin.Javalin;
+import nl.hypothermic.api.NexmoHooks;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.database.IDatabaseHandler;
 import nl.hypothermic.mfsrv.database.TempDatabase;
+import nl.hypothermic.mfsrv.resources.AccountResource;
 import nl.hypothermic.mfsrv.resources.AuthResource;
 import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
-	public static final long SESSION_TIMEOUT = 15000; // ms // 300000
+	public static final long SESSION_TIMEOUT = 300000; // ms
 
 	private final Javalin instance;
+	public final NexmoHooks nexmo;
 	private final IResource[] resources = {
-			(IResource) new AuthResource(this)
+			(IResource) new AuthResource(this),
+			(IResource) new AccountResource(this)
 	};
 
-	public final IDatabaseHandler database = new TempDatabase();
+	public final IDatabaseHandler database = new TempDatabase(this);
 	private final ConfigHandler cfg;
 
 	private static final AtomicInteger counter = new AtomicInteger();
@@ -31,13 +36,12 @@ public class MFServer {
 		}
 	});
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		new MFServer(args).start();
 	}
 
-	public MFServer(String[] args) {
+	public MFServer(String[] args) throws IOException {
 		instance = Javalin.create();
-		instance.enableCaseSensitiveUrls();
 		cfg = new ConfigHandler();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -45,6 +49,8 @@ public class MFServer {
 				instance.stop();
 			}
 		});
+		nexmo = new NexmoHooks(ConfigHandler.instance.getStringOrCrash("nexmoKey"),
+							   ConfigHandler.instance.getStringOrCrash("nexmoSecret"));
 	}
 
 	public void start() {

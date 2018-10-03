@@ -5,19 +5,31 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.nexmo.client.NexmoClientException;
 
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
+import nl.hypothermic.mfsrv.obj.Account;
 import nl.hypothermic.mfsrv.obj.SessionToken;
 import nl.hypothermic.mfsrv.obj.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.UnverifiedMapEntry;
 
 public class TempDatabase implements IDatabaseHandler {
 
 	private static final File dbPath = new File(ConfigHandler.dbPath, "temp/");
 
 	private HashMap<TelephoneNum, String> userComboList = new HashMap<TelephoneNum, String>();
+	private HashMap<TelephoneNum, Entry<String, Integer>> unverifiedComboList = new HashMap<TelephoneNum, Entry<String, Integer>>();
 
+	private MFServer instance;
+	
+	public TempDatabase(MFServer instance) {
+		this.instance = instance;
+	}
+	
 	@Override public void eventServletStart() {
 		dbPath.mkdir();
 		MFServer.threadpool.execute(new Runnable() {
@@ -48,7 +60,6 @@ public class TempDatabase implements IDatabaseHandler {
 				}
 				FileIO.writeFileContents(recordFile, record.getValue());
 			} catch (IOException x) {
-				System.out.println("Unable to save record for " + record.toString());
 				x.printStackTrace();
 			}
 		}
@@ -79,12 +90,47 @@ public class TempDatabase implements IDatabaseHandler {
 		if (isUserRegistered(num)) {
 			return -5;
 		}
-		userComboList.put(num, passwdHash);
+		if (isUserUnverified(num)) {
+			return -6;
+		}
+		int verificationToken = ThreadLocalRandom.current().nextInt(10000, 99999);
+		unverifiedComboList.put(num, new UnverifiedMapEntry(passwdHash, verificationToken));
+		try {
+			instance.nexmo.sendTextMessage("MeefietsApp", num.country + "" + num.number, "Uw verifieercode voor uw MeefietsApp account is: " + verificationToken);
+		} catch (Exception x) {
+			x.printStackTrace();
+			return -7;
+		}
+		System.out.println("Nieuwe gebruiker: " + num.toString() + " " + verificationToken);
 		return 1;
+	}
+	
+	@Override public int userVerify(TelephoneNum num, int verificationToken) {
+		for (Entry<TelephoneNum, Entry<String, Integer>> iter : unverifiedComboList.entrySet()) {
+			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
+				if (iter.getValue().getValue().equals(verificationToken)) {
+					System.out.println("Gebruiker is geverifieerd: " + num.toString());
+					userComboList.put(num, iter.getValue().getKey());
+					unverifiedComboList.remove(iter.getKey());
+					return 1;
+				}
+			}
+		}
+		System.out.println("Kon gebruiker niet verifieren: " + num.toString());
+		return 0;
 	}
 
 	@Override public boolean isUserRegistered(TelephoneNum num) {
 		for (TelephoneNum iter : userComboList.keySet()) {
+			if (iter.country == num.country && iter.number == num.number) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/* -- */ public boolean isUserUnverified(TelephoneNum num) {
+		for (TelephoneNum iter : unverifiedComboList.keySet()) {
 			if (iter.country == num.country && iter.number == num.number) {
 				return true;
 			}
@@ -132,5 +178,9 @@ public class TempDatabase implements IDatabaseHandler {
 				iter.getValue().resetTime();
 			}
 		}
+	}
+
+	@Override public Account getAccount(TelephoneNum num) {
+		return null; // TODO!!
 	}
 }
