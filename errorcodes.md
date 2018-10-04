@@ -1,4 +1,6 @@
-# Responscodes
+# Responscodes en endpoints
+
+Alle endpoints werken met HTTP-GET
 
 ### Globaal
 
@@ -38,10 +40,28 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 |  -1  | Niet genoeg argumenten |
 |  -2  | Argumenten onjuist geformatteerd |
 
-#### /auth/sync
+### /auth/sync
 | Code | Omschrijving |
 | ---- | ------------ |
 |   1  | Sessie-token is geldig |
 |   0  | Sessie-token is niet geldig |
 |  -1  | Niet genoeg argumenten |
 |  -2  | Argumenten onjuist geformatteerd |
+
+### /account/get
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success, return is na newline char (\n) |
+|   0  | Gebruiker bestaat niet OF algemene fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /account/manage/setname
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Gebruiker bestaat niet OF algemene fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |

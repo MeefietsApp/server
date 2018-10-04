@@ -25,9 +25,9 @@
 			<version>1.7.25</version>
 		</dependency>
 		<dependency>
-            <groupId>com.nexmo</groupId>
-            <artifactId>client</artifactId>
-            <version>3.8.0</version>
-        </dependency>
+			<groupId>com.nexmo</groupId>
+			<artifactId>client</artifactId>
+			<version>3.8.0</version>
+		</dependency>
 	</dependencies>
 </project>

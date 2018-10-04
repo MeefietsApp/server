@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.nexmo.client.NexmoClientException;
-
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
@@ -189,6 +187,22 @@ public class TempDatabase implements IDatabaseHandler {
 	}
 
 	@Override public Account getAccount(TelephoneNum num) {
-		return null; // TODO!!
+		File record = new File(dbPath, num.country + "/" + num.number + ".acc");
+		if (record.exists()) {
+			try {
+				return (Account) FileIO.deserialize(record);
+			} catch (Exception x) {
+				x.printStackTrace();
+			}
+		} else {
+			try {
+				Account acc = new Account(num, "user" + ThreadLocalRandom.current().nextInt(100000, 999999));
+				FileIO.serialize(record, acc);
+				return acc;
+			} catch (Exception x) {
+				x.printStackTrace();
+			}
+		}
+		return null;
 	}
 }
