@@ -163,10 +163,18 @@ public class TempDatabase implements IDatabaseHandler {
 	}
 
 	@Override public boolean isSessionTokenValid(TelephoneNum num, int token) {
-		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
-			if (iter.getKey().country == num.country && iter.getKey().number == num.number && iter.getValue().token == token) {
-				iter.getValue().resetTime();
-				return true;
+		if (num == null) {
+			for (SessionToken iter : sessionList.values()) {
+				if (iter.token == token) {
+					return true;
+				}
+			}
+		} else {
+			for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
+				if (iter.getKey().country == num.country && iter.getKey().number == num.number && iter.getValue().token == token) {
+					iter.getValue().resetTime();
+					return true;
+				}
 			}
 		}
 		return false;
