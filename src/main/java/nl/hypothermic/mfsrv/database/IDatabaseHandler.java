@@ -7,9 +7,9 @@ public interface IDatabaseHandler {
 	
 	// --- Events
 	
-	public void eventServletStart();
+	public void eventServletStart() throws Exception;
 	
-	public void eventServletStop();
+	public void eventServletStop() throws Exception;
 	
 	// --- Authenticatie
 	
