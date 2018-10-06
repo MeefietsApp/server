@@ -17,6 +17,7 @@ import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
+	public static final double SERVER_VERSION = 1.00;
 	public static final long SESSION_TIMEOUT = 300000; // ms
 
 	private final Javalin instance;
@@ -36,7 +37,7 @@ public class MFServer {
 		}
 	});
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		new MFServer(args).start();
 	}
 
@@ -45,19 +46,30 @@ public class MFServer {
 		cfg = new ConfigHandler();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				database.eventServletStop();
+				try {
+					MFLogger.log(this, "Database ontkoppelen...");
+					database.eventServletStop();
+				} catch (Exception x) {
+					MFLogger.err(this, "Fout bij ontkoppelen database:");
+					x.printStackTrace();
+				}
+				MFLogger.log(this, "REST-server stoppen...");
 				instance.stop();
+				MFLogger.log(this, "MF-server is gestopt.");
 			}
 		});
 		nexmo = new NexmoHooks(ConfigHandler.instance.getStringOrCrash("nexmoKey"),
 							   ConfigHandler.instance.getStringOrCrash("nexmoSecret"));
 	}
 
-	public void start() {
+	public void start() throws Exception {
+		MFLogger.log(this, "Database aan het laden...");
 		database.eventServletStart();
+		MFLogger.log(this, "REST-server starten...");
 		instance.start(7000);
 		for (IResource iter : resources) {
 			iter.registerResource(instance);
 		}
+		MFLogger.log(this, "Gereed voor gebruik.");
 	}
 }
