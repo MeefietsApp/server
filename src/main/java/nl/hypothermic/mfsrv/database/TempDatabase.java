@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
+import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
@@ -99,7 +100,7 @@ public class TempDatabase implements IDatabaseHandler {
 			x.printStackTrace();
 			return -7;
 		}
-		System.out.println("Nieuwe gebruiker: " + num.toString() + " " + verificationToken);
+		MFLogger.log(this, "Nieuwe gebruiker: " + num.toString() + " " + verificationToken);
 		return 1;
 	}
 	
@@ -107,14 +108,14 @@ public class TempDatabase implements IDatabaseHandler {
 		for (Entry<TelephoneNum, Entry<String, Integer>> iter : unverifiedComboList.entrySet()) {
 			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
 				if (iter.getValue().getValue().equals(verificationToken)) {
-					System.out.println("Gebruiker is geverifieerd: " + num.toString());
+					MFLogger.log(this, "Gebruiker is geverifieerd: " + num.toString());
 					userComboList.put(num, iter.getValue().getKey());
 					unverifiedComboList.remove(iter.getKey());
 					return 1;
 				}
 			}
 		}
-		System.out.println("Kon gebruiker niet verifieren: " + num.toString());
+		MFLogger.log(this, "Kon gebruiker niet verifieren: " + num.toString());
 		return 0;
 	}
 

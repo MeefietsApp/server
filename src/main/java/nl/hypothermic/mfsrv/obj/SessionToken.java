@@ -16,7 +16,6 @@ public class SessionToken {
 	}
 
 	public boolean isExpired() {
-		System.out.println("Expired? " + (System.currentTimeMillis() > time + MFServer.SESSION_TIMEOUT));
 		return System.currentTimeMillis() > time + MFServer.SESSION_TIMEOUT;
 	}
 	

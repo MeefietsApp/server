@@ -5,6 +5,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 import io.javalin.Javalin;
 import nl.hypothermic.api.NexmoHooks;
@@ -17,7 +22,7 @@ import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
-	public static final double SERVER_VERSION = 1.00;
+	public static final double SERVER_VERSION = 1.01;
 	public static final long SESSION_TIMEOUT = 300000; // ms
 
 	private final Javalin instance;
@@ -42,7 +47,19 @@ public class MFServer {
 	}
 
 	public MFServer(String[] args) throws IOException {
-		instance = Javalin.create();
+		instance = Javalin.create().server(new Supplier<Server>() {
+			@Override public Server get() {
+			    Server server = new Server();
+			    ServerConnector serverConnector = new ServerConnector(server);
+			    serverConnector.setHost("149.202.45.240");
+			    serverConnector.setPort(7000);
+			    server.setConnectors(new Connector[]{
+			    		serverConnector
+			    });
+			    return server;
+			}
+		});
+				
 		cfg = new ConfigHandler();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
