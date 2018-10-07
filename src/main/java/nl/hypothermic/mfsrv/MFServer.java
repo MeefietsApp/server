@@ -29,7 +29,7 @@ public class MFServer {
 	public final NexmoHooks nexmo;
 	private final IResource[] resources = {
 			(IResource) new AuthResource(this),
-			(IResource) new AccountResource(this)
+			(IResource) new AccountResource(this),
 	};
 
 	public final IDatabaseHandler database = new TempDatabase(this);
@@ -47,20 +47,19 @@ public class MFServer {
 	}
 
 	public MFServer(String[] args) throws IOException {
+		cfg = new ConfigHandler();
 		instance = Javalin.create().server(new Supplier<Server>() {
 			@Override public Server get() {
 			    Server server = new Server();
 			    ServerConnector serverConnector = new ServerConnector(server);
-			    serverConnector.setHost("149.202.45.240");
-			    serverConnector.setPort(7000);
+			    serverConnector.setHost(ConfigHandler.instance.getStringOrCrash("srv_address"));
+			    serverConnector.setPort(Integer.valueOf(ConfigHandler.instance.getStringOrCrash("srv_port")));
 			    server.setConnectors(new Connector[]{
 			    		serverConnector
 			    });
 			    return server;
 			}
 		});
-				
-		cfg = new ConfigHandler();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try {
@@ -75,8 +74,8 @@ public class MFServer {
 				MFLogger.log(this, "MF-server is gestopt.");
 			}
 		});
-		nexmo = new NexmoHooks(ConfigHandler.instance.getStringOrCrash("nexmoKey"),
-							   ConfigHandler.instance.getStringOrCrash("nexmoSecret"));
+		nexmo = new NexmoHooks(ConfigHandler.instance.getStringOrCrash("nexmo_key"),
+							   ConfigHandler.instance.getStringOrCrash("nexmo_secret"));
 	}
 
 	public void start() throws Exception {
