@@ -82,7 +82,7 @@ public class MFServer {
 		MFLogger.log(this, "Database aan het laden...");
 		database.eventServletStart();
 		MFLogger.log(this, "REST-server starten...");
-		instance.start(7000);
+		instance.start(Integer.valueOf(ConfigHandler.instance.getStringOrCrash("srv_port")));
 		for (IResource iter : resources) {
 			iter.registerResource(instance);
 		}
