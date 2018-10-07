@@ -15,7 +15,12 @@ public class MFLogger {
 	}
 	
 	public static void log(Object cl, String message) {
-		ps.println("I - " + cl.getClass().getSimpleName() + " - " + message);
+		String cls = cl.getClass().getSimpleName();
+		if (cls.length() != 0) {
+			ps.println("I - " + cl.getClass().getSimpleName() + " - " + message);
+		} else {
+			ps.println("I - <anonymous> - " + message);
+		}
 	}
 	
 	public static void err(Object cl, String message) {
