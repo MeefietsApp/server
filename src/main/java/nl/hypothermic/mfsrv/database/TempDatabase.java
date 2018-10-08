@@ -1,7 +1,11 @@
 package nl.hypothermic.mfsrv.database;
 
+import static java.nio.file.attribute.PosixFilePermission.*;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,11 +28,11 @@ public class TempDatabase implements IDatabaseHandler {
 	private HashMap<TelephoneNum, Entry<String, Integer>> unverifiedComboList = new HashMap<TelephoneNum, Entry<String, Integer>>();
 
 	private MFServer instance;
-	
+
 	public TempDatabase(MFServer instance) {
 		this.instance = instance;
 	}
-	
+
 	@Override public void eventServletStart() {
 		dbPath.mkdir();
 		MFServer.threadpool.execute(new Runnable() {
@@ -55,6 +59,7 @@ public class TempDatabase implements IDatabaseHandler {
 			File recordFile = new File(new File(dbPath, record.getKey().country + "/"), record.getKey().number + "");
 			try {
 				if (!recordFile.exists()) {
+					Files.setPosixFilePermissions(recordFile.toPath(), EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
 					recordFile.createNewFile();
 				}
 				FileIO.writeFileContents(recordFile, record.getValue());
@@ -84,7 +89,7 @@ public class TempDatabase implements IDatabaseHandler {
 		sessionList.put(num, token);
 		return token.token;
 	}
-	
+
 	@Override public int userRegister(TelephoneNum num, String passwdHash) {
 		if (isUserRegistered(num)) {
 			return -5;
@@ -103,7 +108,7 @@ public class TempDatabase implements IDatabaseHandler {
 		MFLogger.log(this, "Nieuwe gebruiker: " + num.toString() + " " + verificationToken);
 		return 1;
 	}
-	
+
 	@Override public int userVerify(TelephoneNum num, int verificationToken) {
 		for (Entry<TelephoneNum, Entry<String, Integer>> iter : unverifiedComboList.entrySet()) {
 			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
@@ -127,7 +132,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 		return false;
 	}
-	
+
 	/* -- */ public boolean isUserUnverified(TelephoneNum num) {
 		for (TelephoneNum iter : unverifiedComboList.keySet()) {
 			if (iter.country == num.country && iter.number == num.number) {
@@ -145,7 +150,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 		return false;
 	}
-	
+
 	/* -- */ public int isUserLoggedIn(TelephoneNum num) {
 		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
 			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
