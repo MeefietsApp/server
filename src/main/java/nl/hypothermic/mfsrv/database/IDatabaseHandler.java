@@ -1,7 +1,7 @@
 package nl.hypothermic.mfsrv.database;
 
-import nl.hypothermic.mfsrv.obj.Account;
-import nl.hypothermic.mfsrv.obj.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.account.Account;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 
 public interface IDatabaseHandler {
 	

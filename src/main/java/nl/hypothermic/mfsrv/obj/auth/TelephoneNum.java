@@ -1,8 +1,10 @@
-package nl.hypothermic.mfsrv.obj;
+package nl.hypothermic.mfsrv.obj.auth;
 
 import java.io.Serializable;
 
 public class TelephoneNum implements Serializable {
+	
+	static final long serialVersionUID = 1L;
 	
 	public final int country;
 	

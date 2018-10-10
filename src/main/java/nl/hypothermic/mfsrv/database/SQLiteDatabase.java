@@ -9,8 +9,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import nl.hypothermic.mfsrv.MFServer;
-import nl.hypothermic.mfsrv.obj.Account;
-import nl.hypothermic.mfsrv.obj.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.account.Account;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 
 public class SQLiteDatabase implements IDatabaseHandler {
 

@@ -6,8 +6,8 @@ import io.javalin.Context;
 import io.javalin.Handler;
 import io.javalin.Javalin;
 import nl.hypothermic.mfsrv.MFServer;
-import nl.hypothermic.mfsrv.obj.Account;
-import nl.hypothermic.mfsrv.obj.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.account.Account;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.util.UserInputCleaner;
 
 public class AccountResource implements IResource {
@@ -26,9 +26,8 @@ public class AccountResource implements IResource {
 				} else {
 					try {
 						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
-							ctx.result("1\n" + 
-						               server.database.getAccount(new TelephoneNum(Integer.valueOf(ctx.queryParam("targetcountry")),
-                                                                                   Integer.valueOf(ctx.queryParam("targetnum")))).toSerializedString());
+							ctx.result("1" + server.database.getAccount(new TelephoneNum(Integer.valueOf(ctx.queryParam("targetcountry")),
+                                                                                         Integer.valueOf(ctx.queryParam("targetnum")))).toSerializedString());
 						} else {
 							ctx.result("-9");
 						}

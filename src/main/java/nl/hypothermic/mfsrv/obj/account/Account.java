@@ -1,19 +1,24 @@
-package nl.hypothermic.mfsrv.obj;
+package nl.hypothermic.mfsrv.obj.account;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.commons.codec.DecoderException;
+
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 
 public class Account implements Serializable {
+	
+	static final long serialVersionUID = 1L;
 	
 	public static Account fromFile(File path) throws ClassNotFoundException, IOException {
 		return (Account) FileIO.deserialize(path);
 	}
 	
-	public static Account fromSerializedString(String str) throws ClassNotFoundException, IOException {
+	public static Account fromSerializedString(String str) throws ClassNotFoundException, IOException, DecoderException {
 		return (Account) FileIO.deserializeFromString(str);
 	}
 	

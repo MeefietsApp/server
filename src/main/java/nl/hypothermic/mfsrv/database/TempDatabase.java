@@ -15,10 +15,10 @@ import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
-import nl.hypothermic.mfsrv.obj.Account;
-import nl.hypothermic.mfsrv.obj.SessionToken;
-import nl.hypothermic.mfsrv.obj.TelephoneNum;
-import nl.hypothermic.mfsrv.obj.UnverifiedMapEntry;
+import nl.hypothermic.mfsrv.obj.account.Account;
+import nl.hypothermic.mfsrv.obj.auth.SessionToken;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.auth.UnverifiedMapEntry;
 
 public class TempDatabase implements IDatabaseHandler {
 
@@ -59,7 +59,8 @@ public class TempDatabase implements IDatabaseHandler {
 			File recordFile = new File(new File(dbPath, record.getKey().country + "/"), record.getKey().number + "");
 			try {
 				if (!recordFile.exists()) {
-					Files.setPosixFilePermissions(recordFile.toPath(), EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
+					System.out.println(recordFile.getAbsolutePath());
+					Files.setPosixFilePermissions(recordFile.toPath().getParent(), EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
 					recordFile.createNewFile();
 				}
 				FileIO.writeFileContents(recordFile, record.getValue());

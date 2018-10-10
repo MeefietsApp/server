@@ -1,4 +1,4 @@
-package nl.hypothermic.mfsrv.obj;
+package nl.hypothermic.mfsrv.obj.auth;
 
 import java.util.Map;
 

@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.apache.commons.codec.DecoderException;
+
 public final class FileIO {
 	
 	public static final String readFileContents(File file) throws IOException {
@@ -59,18 +61,19 @@ public final class FileIO {
 	}
 	
 	public static final String serializeToString(Serializable obj) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream out = new ObjectOutputStream(baos);
-		out.writeObject(obj);
-		out.close();
-		return baos.toString();
-	}
-	
-	public static final Serializable deserializeFromString(String str) throws IOException, ClassNotFoundException {
-		ByteArrayInputStream bais = new ByteArrayInputStream(str.getBytes());
-		ObjectInputStream in = new ObjectInputStream(bais);
-		Serializable ser = (Serializable) in.readObject();
-		in.close();
-		return ser;
-	}
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(baos);
+        out.writeObject(obj);
+        out.close();
+        return org.apache.commons.codec.binary.Hex.encodeHexString(baos.toByteArray());
+    }
+
+    public static final Serializable deserializeFromString(String str) throws IOException, ClassNotFoundException, DecoderException {
+        byte[] bytes = org.apache.commons.codec.binary.Hex.decodeHex(str);
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ObjectInputStream in = new ObjectInputStream(bais);
+        Serializable ser = (Serializable) in.readObject();
+        in.close();
+        return ser;
+    }
 }

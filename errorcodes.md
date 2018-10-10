@@ -12,6 +12,7 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 |   0  | False |
 |  -1  | Niet genoeg argumenten |
 |  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |
 
 ### /auth/login
 | Code | Omschrijving |
@@ -51,7 +52,7 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 ### /account/get
 | Code | Omschrijving |
 | ---- | ------------ |
-|   1  | Success, return is na newline char (\n) |
+|   1  | Success, return na de character. |
 |   0  | Gebruiker bestaat niet OF algemene fout |
 |  -1  | Niet genoeg argumenten |
 |  -2  | Argumenten onjuist geformatteerd |

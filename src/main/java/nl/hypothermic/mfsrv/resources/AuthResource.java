@@ -6,7 +6,7 @@ import io.javalin.Context;
 import io.javalin.Handler;
 import io.javalin.Javalin;
 import nl.hypothermic.mfsrv.MFServer;
-import nl.hypothermic.mfsrv.obj.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 
 public class AuthResource implements IResource {
 
