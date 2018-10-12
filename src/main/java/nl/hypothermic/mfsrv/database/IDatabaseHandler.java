@@ -1,7 +1,11 @@
 package nl.hypothermic.mfsrv.database;
 
+import java.util.ArrayList;
+
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.event.Event;
+import nl.hypothermic.mfsrv.obj.event.EventType;
 
 public interface IDatabaseHandler {
 	
@@ -30,5 +34,13 @@ public interface IDatabaseHandler {
 	// --- Account
 	
 	public Account getAccount(TelephoneNum num);
+	
+	// --- Events
+	
+	public Event getEvent(int eventId);
+
+	public int createEvent(EventType type);
+	
+	public ArrayList<Integer> getUserEvents(Account acc);
 
 }

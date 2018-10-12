@@ -22,6 +22,10 @@ public abstract class Event implements Serializable {
 		return castFromObject(FileIO.deserializeFromString(str));
 	}
 	
+	public static Event fromType(EventType type) throws InstantiationException, IllegalAccessException {
+		return type.getEventClass().newInstance();
+	}
+	
 	private static Event castFromObject(Object obj) throws ClassNotFoundException {
 		if (obj instanceof MeefietsEvent) {
 			return (MeefietsEvent) obj;

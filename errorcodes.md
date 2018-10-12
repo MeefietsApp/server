@@ -66,3 +66,15 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 |  -1  | Niet genoeg argumenten |
 |  -2  | Argumenten onjuist geformatteerd |
 |  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /event/create
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Algemene fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -6  | Interne fout: serialization error |
+|  -7  | Interne fout: error creating new instance |
+|  -8  | Interne fout: invalid event type |
+|  -9  | Authenticatiefout of niet genoeg permissies |
