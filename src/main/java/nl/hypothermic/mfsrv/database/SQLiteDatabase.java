@@ -7,10 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
+import nl.hypothermic.mfsrv.obj.event.Event;
+import nl.hypothermic.mfsrv.obj.event.EventType;
 
 public class SQLiteDatabase implements IDatabaseHandler {
 
@@ -91,6 +94,21 @@ public class SQLiteDatabase implements IDatabaseHandler {
 
 	@Override
 	public Account getAccount(TelephoneNum num) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override public Event getEvent(int eventId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override public int createEvent(EventType type) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override public ArrayList<Integer> getUserEvents(Account acc) {
 		// TODO Auto-generated method stub
 		return null;
 	}
