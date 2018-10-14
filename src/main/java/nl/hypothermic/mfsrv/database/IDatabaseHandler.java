@@ -41,6 +41,8 @@ public interface IDatabaseHandler {
 
 	public int createEvent(EventType type);
 	
+	public int registerEvent(Event event);
+	
 	public ArrayList<Integer> getUserEvents(Account acc);
 
 }

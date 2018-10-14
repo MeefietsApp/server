@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.DecoderException;
 
+import io.javalin.Context;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
-import nl.hypothermic.mfsrv.obj.account.Account;
 
 public abstract class Event implements Serializable {
 
@@ -25,6 +25,8 @@ public abstract class Event implements Serializable {
 	public static Event fromType(EventType type) throws InstantiationException, IllegalAccessException {
 		return type.getEventClass().newInstance();
 	}
+	
+	public abstract Event fromJavalinCtx(Context ctx) throws InstantiationException, IllegalAccessException, NumberFormatException;
 	
 	private static Event castFromObject(Object obj) throws ClassNotFoundException {
 		if (obj instanceof MeefietsEvent) {

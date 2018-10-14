@@ -21,6 +21,7 @@ import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.resources.AccountResource;
 import nl.hypothermic.mfsrv.resources.AuthResource;
+import nl.hypothermic.mfsrv.resources.EventResource;
 import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
@@ -33,6 +34,7 @@ public class MFServer {
 	private final IResource[] resources = {
 			(IResource) new AuthResource(this),
 			(IResource) new AccountResource(this),
+			(IResource) new EventResource(this),
 	};
 
 	public final IDatabaseHandler database = new TempDatabase(this);

@@ -1,11 +1,15 @@
 package nl.hypothermic.mfsrv.resources;
 
+import com.auth0.jwt.internal.com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
 import io.javalin.Context;
 import io.javalin.Handler;
 import io.javalin.Javalin;
 import nl.hypothermic.mfsrv.MFServer;
+import nl.hypothermic.mfsrv.obj.event.Event;
 import nl.hypothermic.mfsrv.obj.event.EventType;
 import nl.hypothermic.mfsrv.obj.event.InvalidEventTypeException;
+import nl.hypothermic.mfsrv.obj.event.MeefietsEvent;
 
 public class EventResource implements IResource {
 
@@ -23,15 +27,19 @@ public class EventResource implements IResource {
 				} else {
 					try {
 						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
-							ctx.result("1");
-							// TODO
+							Event event = server.database.getEvent(Integer.valueOf(ctx.queryParam("id")));
+							if (event != null) {
+								ctx.result("1" + event.toSerializedString());
+							} else {
+								ctx.result("0");
+							}
 						} else {
 							ctx.result("-9");
 						}
 					} catch (NumberFormatException nfx) {
 						ctx.result("-2");
 					} catch (NullPointerException npe) {
-						ctx.result("0");
+						ctx.result("-2");
 					}
 				}
 			}
@@ -43,8 +51,10 @@ public class EventResource implements IResource {
 				} else {
 					try {
 						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
-							ctx.result("1");
-							server.database.createEvent(EventType.fromInt(Integer.valueOf(ctx.queryParam("type"))));
+							//legacy//ctx.result(server.database.createEvent(EventType.fromInt(Integer.valueOf(ctx.queryParam("type")))) + "");
+							ctx.result(server.database.registerEvent(Event.fromType(EventType.fromInt(Integer.valueOf(ctx.queryParam("type"))))
+									                                      .fromJavalinCtx(ctx))
+									   + "");
 						} else {
 							ctx.result("-9");
 						}

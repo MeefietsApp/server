@@ -112,4 +112,9 @@ public class SQLiteDatabase implements IDatabaseHandler {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override public int registerEvent(Event event) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

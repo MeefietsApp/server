@@ -30,7 +30,8 @@ import nl.hypothermic.mfsrv.obj.event.EventType;
 public class TempDatabase implements IDatabaseHandler {
 
 	private static final File dbPath = new File(ConfigHandler.dbPath, "temp/");
-	private static final File eventCounter = new File(dbPath, "events/count");
+	private static final File eventPath = new File(dbPath, "events/");
+	private static final File eventCounter = new File(eventPath, "count");
 
 	private HashMap<TelephoneNum, String> userComboList = new HashMap<TelephoneNum, String>();
 	private HashMap<TelephoneNum, Entry<String, Integer>> unverifiedComboList = new HashMap<TelephoneNum, Entry<String, Integer>>();
@@ -42,18 +43,25 @@ public class TempDatabase implements IDatabaseHandler {
 	}
 
 	public int getNextEventId() {
-		int id = Integer.valueOf(FileIO.readFileContentsUnsafe(eventCounter));
-		FileIO.writeFileContentsUnsafe(eventCounter, id++ + "");
+		int id = 0;
+		try {
+			id = Integer.valueOf(FileIO.readFileContents(eventCounter));
+			FileIO.writeFileContents(eventCounter, (id + 1) + "");
+		} catch (Exception x) {
+			// TODO Auto-generated catch block
+			x.printStackTrace();
+		}
 		return id;
 	}
 
 	@Override
 	public void eventServletStart() {
-		dbPath.mkdir();
+		eventPath.mkdirs();
 		if (!eventCounter.exists()) {
 			try {
-				eventCounter.createNewFile();
-				FileIO.writeFileContents(eventCounter, "0");
+				if (eventCounter.createNewFile()) {
+					FileIO.writeFileContents(eventCounter, "0");
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -283,6 +291,22 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 		if (event == null) {
 			return -7;
+		}
+		try {
+			FileIO.serialize(record, event);
+			return 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -6;
+		}
+	}
+	
+	@Override
+	public int registerEvent(Event event) {
+		int id = getNextEventId();
+		File record = new File(dbPath, "events/" + id + ".evt");
+		if (record.exists()) {
+			MFLogger.err(this, "critical: trying to register event " + id + " which already exists!");
 		}
 		try {
 			FileIO.serialize(record, event);

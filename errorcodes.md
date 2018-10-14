@@ -67,6 +67,15 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 |  -2  | Argumenten onjuist geformatteerd |
 |  -9  | Authenticatiefout of niet genoeg permissies |
 
+### /event/get
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Id niet gevonden |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
 ### /event/create
 | Code | Omschrijving |
 | ---- | ------------ |

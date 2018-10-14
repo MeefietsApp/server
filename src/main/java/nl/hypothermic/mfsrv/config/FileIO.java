@@ -14,6 +14,8 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.DecoderException;
 
+import nl.hypothermic.mfsrv.MFLogger;
+
 public final class FileIO {
 
 	public static final String readFileContents(File file) throws IOException {
