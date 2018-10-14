@@ -36,9 +36,7 @@ public class EventResource implements IResource {
 						} else {
 							ctx.result("-9");
 						}
-					} catch (NumberFormatException nfx) {
-						ctx.result("-2");
-					} catch (NullPointerException npe) {
+					} catch (NumberFormatException | NullPointerException x) {
 						ctx.result("-2");
 					}
 				}
@@ -58,10 +56,8 @@ public class EventResource implements IResource {
 						} else {
 							ctx.result("-9");
 						}
-					} catch (NumberFormatException nfx) {
+					} catch (NumberFormatException | NullPointerException x) {
 						ctx.result("-2");
-					} catch (NullPointerException npe) {
-						ctx.result("0");
 					} catch (InvalidEventTypeException iete) {
 						ctx.result("-6");
 					}
