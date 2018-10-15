@@ -119,8 +119,13 @@ public class SQLiteDatabase implements IDatabaseHandler {
 		return 0;
 	}
 
-	@Override public NetArrayList<Integer> getContacts(TelephoneNum num) {
+	@Override public NetArrayList<TelephoneNum> getContacts(TelephoneNum num) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override public int addContact(TelephoneNum num, TelephoneNum dest) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

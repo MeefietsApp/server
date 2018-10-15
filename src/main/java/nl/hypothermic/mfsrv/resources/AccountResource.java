@@ -39,7 +39,7 @@ public class AccountResource implements IResource {
 				}
 			}
 		});
-		instance.get("/account/get/contacts", new Handler() {
+		instance.get("/account/contacts/get", new Handler() {
 			@Override public void handle(Context ctx) throws Exception {
 				if (ctx.queryParam("country") == null || ctx.queryParam("num") == null || ctx.queryParam("token") == null) {
 					ctx.result("-1");
@@ -48,7 +48,31 @@ public class AccountResource implements IResource {
 						TelephoneNum num = new TelephoneNum(Integer.valueOf(ctx.queryParam("country")),
 	                                                        Integer.valueOf(ctx.queryParam("num")));
 						if (server.database.isSessionTokenValid(num, Integer.valueOf(ctx.queryParam("token")))) {
-							ctx.result("1" + server.database.getContacts(num));
+							ctx.result("1" + server.database.getContacts(num).toSerializedString());
+						} else {
+							ctx.result("-9");
+						}
+					} catch (NumberFormatException nfx) {
+						ctx.result("-2");
+					} catch (NullPointerException npe) {
+						ctx.result("0");
+					}
+				}
+			}
+		});
+		instance.get("/account/contacts/add", new Handler() {
+			@Override public void handle(Context ctx) throws Exception {
+				if (ctx.queryParam("country") == null || ctx.queryParam("num") == null || ctx.queryParam("token") == null
+				    || ctx.queryParam("targetcountry") == null || ctx.queryParam("targetnum") == null) {
+					ctx.result("-1");
+				} else {
+					try {
+						TelephoneNum num = new TelephoneNum(Integer.valueOf(ctx.queryParam("country")),
+	                                                        Integer.valueOf(ctx.queryParam("num")));
+						TelephoneNum target = new TelephoneNum(Integer.valueOf(ctx.queryParam("targetcountry")),
+                                							   Integer.valueOf(ctx.queryParam("targetnum")));
+						if (server.database.isSessionTokenValid(num, Integer.valueOf(ctx.queryParam("token")))) {
+							ctx.result(server.database.addContact(num, target) + "");
 						} else {
 							ctx.result("-9");
 						}

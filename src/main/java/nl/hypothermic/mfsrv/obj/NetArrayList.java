@@ -2,13 +2,14 @@ package nl.hypothermic.mfsrv.obj;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.apache.commons.codec.DecoderException;
 
 import nl.hypothermic.mfsrv.config.FileIO;
 
-public class NetArrayList<E> extends ArrayList<E> {
+public class NetArrayList<E> extends ArrayList<E> implements Serializable {
 	
 	static final long serialVersionUID = 1L;
 	

@@ -339,17 +339,17 @@ public class TempDatabase implements IDatabaseHandler {
 		return null;
 	}
 
-	@Override public NetArrayList<Integer> getContacts(TelephoneNum num) {
+	@Override public NetArrayList<TelephoneNum> getContacts(TelephoneNum num) {
 		File record = new File(dbPath, num.country + "/" + num.number + ".ctl");
 		if (record.exists()) {
 			try {
-				return (NetArrayList<Integer>) FileIO.deserialize(record);
+				return (NetArrayList<TelephoneNum>) FileIO.deserialize(record);
 			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		} else {
 			try {
-				NetArrayList<Integer> events = new NetArrayList<Integer>();
+				NetArrayList<TelephoneNum> events = new NetArrayList<TelephoneNum>();
 				FileIO.serialize(record, events);
 				return events;
 			} catch (Exception x) {
@@ -357,5 +357,17 @@ public class TempDatabase implements IDatabaseHandler {
 			}
 		}
 		return null;
+	}
+
+	@Override public int addContact(TelephoneNum num, TelephoneNum dest) {
+		NetArrayList<TelephoneNum> contacts = this.getContacts(num);
+		contacts.add(dest);
+		try {
+			FileIO.serialize(new File(dbPath, num.country + "/" + num.number + ".ctl"), contacts);
+			return 1;
+		} catch (Exception x) {
+			x.printStackTrace();
+		}
+		return 0;
 	}
 }

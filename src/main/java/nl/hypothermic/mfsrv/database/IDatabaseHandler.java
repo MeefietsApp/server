@@ -36,7 +36,9 @@ public interface IDatabaseHandler {
 	
 	public Account getAccount(TelephoneNum num);
 	
-	public NetArrayList<Integer> getContacts(TelephoneNum num);
+	public NetArrayList<TelephoneNum> getContacts(TelephoneNum num);
+	
+	public int addContact(TelephoneNum num, TelephoneNum dest);
 	
 	// --- Events
 	

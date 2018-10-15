@@ -17,6 +17,7 @@ import nl.hypothermic.api.NexmoHooks;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.database.IDatabaseHandler;
 import nl.hypothermic.mfsrv.database.TempDatabase;
+import nl.hypothermic.mfsrv.obj.NetArrayList;
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.resources.AccountResource;
@@ -26,7 +27,7 @@ import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
-	public static final double SERVER_VERSION = 1.01;
+	public static final double SERVER_VERSION = 1.02;
 	public static final long SESSION_TIMEOUT = 300000; // ms
 
 	private final Javalin instance;
