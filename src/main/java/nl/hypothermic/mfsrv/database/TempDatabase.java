@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
@@ -368,6 +369,27 @@ public class TempDatabase implements IDatabaseHandler {
 		} catch (Exception x) {
 			x.printStackTrace();
 		}
-		return 0;
+		return -6;
+	}
+
+	@Override public int deleteContact(TelephoneNum num, TelephoneNum dest) {
+		NetArrayList<TelephoneNum> contacts = this.getContacts(num);
+		//legacy//boolean ret = contacts.remove(dest);
+		boolean ret = false;
+		for (Iterator<TelephoneNum> it = contacts.iterator(); it.hasNext(); ) {
+		    TelephoneNum iter = it.next();
+		    if (iter.country == dest.country && iter.number == dest.number) {
+				it.remove();
+				ret = true;
+				break;
+			}
+		}
+		try {
+			FileIO.serialize(new File(dbPath, num.country + "/" + num.number + ".ctl"), contacts);
+			return ret ? 1 : 0;
+		} catch (Exception x) {
+			x.printStackTrace();
+		}
+		return -6;
 	}
 }

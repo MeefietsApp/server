@@ -40,6 +40,8 @@ public interface IDatabaseHandler {
 	
 	public int addContact(TelephoneNum num, TelephoneNum dest);
 	
+	public int deleteContact(TelephoneNum num, TelephoneNum dest);
+	
 	// --- Events
 	
 	public Event getEvent(int eventId);
