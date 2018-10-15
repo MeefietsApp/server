@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import nl.hypothermic.mfsrv.MFServer;
+import nl.hypothermic.mfsrv.obj.NetArrayList;
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.obj.event.Event;
@@ -116,5 +117,10 @@ public class SQLiteDatabase implements IDatabaseHandler {
 	@Override public int registerEvent(Event event) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override public NetArrayList<Integer> getContacts(TelephoneNum num) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

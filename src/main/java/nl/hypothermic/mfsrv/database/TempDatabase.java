@@ -20,6 +20,7 @@ import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
+import nl.hypothermic.mfsrv.obj.NetArrayList;
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.SessionToken;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
@@ -319,7 +320,7 @@ public class TempDatabase implements IDatabaseHandler {
 
 	@Override
 	public ArrayList<Integer> getUserEvents(Account acc) {
-		File record = new File(dbPath, acc.num.country + "/" + acc.num.number + ".evtl");
+		File record = new File(dbPath, acc.num.country + "/" + acc.num.number + ".etl");
 		if (record.exists()) {
 			try {
 				return (ArrayList<Integer>) FileIO.deserialize(record);
@@ -329,6 +330,26 @@ public class TempDatabase implements IDatabaseHandler {
 		} else {
 			try {
 				ArrayList<Integer> events = new ArrayList<Integer>();
+				FileIO.serialize(record, events);
+				return events;
+			} catch (Exception x) {
+				x.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	@Override public NetArrayList<Integer> getContacts(TelephoneNum num) {
+		File record = new File(dbPath, num.country + "/" + num.number + ".ctl");
+		if (record.exists()) {
+			try {
+				return (NetArrayList<Integer>) FileIO.deserialize(record);
+			} catch (Exception x) {
+				x.printStackTrace();
+			}
+		} else {
+			try {
+				NetArrayList<Integer> events = new NetArrayList<Integer>();
 				FileIO.serialize(record, events);
 				return events;
 			} catch (Exception x) {

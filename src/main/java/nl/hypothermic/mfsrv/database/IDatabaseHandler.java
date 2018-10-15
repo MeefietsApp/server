@@ -2,6 +2,7 @@ package nl.hypothermic.mfsrv.database;
 
 import java.util.ArrayList;
 
+import nl.hypothermic.mfsrv.obj.NetArrayList;
 import nl.hypothermic.mfsrv.obj.account.Account;
 import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.obj.event.Event;
@@ -34,6 +35,8 @@ public interface IDatabaseHandler {
 	// --- Account
 	
 	public Account getAccount(TelephoneNum num);
+	
+	public NetArrayList<Integer> getContacts(TelephoneNum num);
 	
 	// --- Events
 	

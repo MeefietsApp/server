@@ -49,7 +49,6 @@ public class EventResource implements IResource {
 				} else {
 					try {
 						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
-							//legacy//ctx.result(server.database.createEvent(EventType.fromInt(Integer.valueOf(ctx.queryParam("type")))) + "");
 							ctx.result(server.database.registerEvent(Event.fromType(EventType.fromInt(Integer.valueOf(ctx.queryParam("type"))))
 									                                      .fromJavalinCtx(ctx))
 									   + "");

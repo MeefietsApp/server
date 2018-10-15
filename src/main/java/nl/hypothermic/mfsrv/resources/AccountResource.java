@@ -39,6 +39,27 @@ public class AccountResource implements IResource {
 				}
 			}
 		});
+		instance.get("/account/get/contacts", new Handler() {
+			@Override public void handle(Context ctx) throws Exception {
+				if (ctx.queryParam("country") == null || ctx.queryParam("num") == null || ctx.queryParam("token") == null) {
+					ctx.result("-1");
+				} else {
+					try {
+						TelephoneNum num = new TelephoneNum(Integer.valueOf(ctx.queryParam("country")),
+	                                                        Integer.valueOf(ctx.queryParam("num")));
+						if (server.database.isSessionTokenValid(num, Integer.valueOf(ctx.queryParam("token")))) {
+							ctx.result("1" + server.database.getContacts(num));
+						} else {
+							ctx.result("-9");
+						}
+					} catch (NumberFormatException nfx) {
+						ctx.result("-2");
+					} catch (NullPointerException npe) {
+						ctx.result("0");
+					}
+				}
+			}
+		});
 		instance.get("/account/manage/setname", new Handler() {
 			@Override public void handle(Context ctx) throws Exception {
 				// NOTE: controleer het telnummer omdat isSessionTokenValid met alleen de token param
