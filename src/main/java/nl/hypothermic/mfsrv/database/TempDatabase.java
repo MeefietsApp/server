@@ -98,7 +98,6 @@ public class TempDatabase implements IDatabaseHandler {
 			File recordFile = new File(new File(dbPath, record.getKey().country + "/"), record.getKey().number + "");
 			try {
 				if (!recordFile.exists()) {
-					System.out.println(recordFile.getAbsolutePath());
 					Files.setPosixFilePermissions(recordFile.toPath().getParent(),
 							EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
 					recordFile.createNewFile();
@@ -321,18 +320,15 @@ public class TempDatabase implements IDatabaseHandler {
 
 	@Override
 	public NetArrayList<Integer> getUserEvents(TelephoneNum num) {
-		System.out.println("Searching records for events related to " + num.toString());
 		File record = new File(dbPath, num.country + "/" + num.number + ".etl");
 		if (record.exists()) {
 			try {
-				System.out.println("Found record file with contents: " + FileIO.deserialize(record).toString());
 				return (NetArrayList<Integer>) FileIO.deserialize(record);
 			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		} else {
 			try {
-				System.out.println("No records found, creating new.");
 				NetArrayList<Integer> events = new NetArrayList<Integer>();
 				FileIO.serialize(record, events);
 				return events;
@@ -407,7 +403,6 @@ public class TempDatabase implements IDatabaseHandler {
 
 	@Override public int deleteContact(TelephoneNum num, TelephoneNum dest) {
 		NetArrayList<TelephoneNum> contacts = this.getContacts(num);
-		//legacy//boolean ret = contacts.remove(dest);
 		boolean ret = false;
 		for (Iterator<TelephoneNum> it = contacts.iterator(); it.hasNext(); ) {
 		    TelephoneNum iter = it.next();
