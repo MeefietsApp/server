@@ -42,6 +42,10 @@ public interface IDatabaseHandler {
 	
 	public int deleteContact(TelephoneNum num, TelephoneNum dest);
 	
+	public int addUserEvent(int eventId, TelephoneNum dest);
+	
+	public int deleteUserEvent(int eventId, TelephoneNum dest);
+	
 	// --- Events
 	
 	public Event getEvent(int eventId);
@@ -50,6 +54,6 @@ public interface IDatabaseHandler {
 	
 	public int registerEvent(Event event);
 	
-	public ArrayList<Integer> getUserEvents(Account acc);
+	public NetArrayList<Integer> getUserEvents(TelephoneNum num);
 
 }

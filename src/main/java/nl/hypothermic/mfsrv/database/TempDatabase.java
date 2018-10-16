@@ -320,17 +320,20 @@ public class TempDatabase implements IDatabaseHandler {
 	}
 
 	@Override
-	public ArrayList<Integer> getUserEvents(Account acc) {
-		File record = new File(dbPath, acc.num.country + "/" + acc.num.number + ".etl");
+	public NetArrayList<Integer> getUserEvents(TelephoneNum num) {
+		System.out.println("Searching records for events related to " + num.toString());
+		File record = new File(dbPath, num.country + "/" + num.number + ".etl");
 		if (record.exists()) {
 			try {
-				return (ArrayList<Integer>) FileIO.deserialize(record);
+				System.out.println("Found record file with contents: " + FileIO.deserialize(record).toString());
+				return (NetArrayList<Integer>) FileIO.deserialize(record);
 			} catch (Exception x) {
 				x.printStackTrace();
 			}
 		} else {
 			try {
-				ArrayList<Integer> events = new ArrayList<Integer>();
+				System.out.println("No records found, creating new.");
+				NetArrayList<Integer> events = new NetArrayList<Integer>();
 				FileIO.serialize(record, events);
 				return events;
 			} catch (Exception x) {
@@ -338,6 +341,36 @@ public class TempDatabase implements IDatabaseHandler {
 			}
 		}
 		return null;
+	}
+	
+	@Override public int addUserEvent(int eventId, TelephoneNum dest) {
+		NetArrayList<Integer> events = this.getUserEvents(dest);
+		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
+		    Integer iter = it.next();
+		    if (iter != null && iter == eventId) {
+		    	return -6;
+		    }
+		}
+		events.add(eventId);
+		try {
+			FileIO.serialize(new File(dbPath, dest.country + "/" + dest.number + ".etl"), events);
+		} catch (IOException x) {
+			x.printStackTrace();
+			return -7;
+		}
+		return 1;
+	}
+	
+	@Override public int deleteUserEvent(int eventId, TelephoneNum dest) {
+		NetArrayList<Integer> events = this.getUserEvents(dest);
+		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
+		    Integer iter = it.next();
+		    if (iter != null && iter == eventId) {
+		    	it.remove();
+		    	return 1;
+		    }
+		}
+		return 0;
 	}
 
 	@Override public NetArrayList<TelephoneNum> getContacts(TelephoneNum num) {

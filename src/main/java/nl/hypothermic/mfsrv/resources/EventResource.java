@@ -1,15 +1,13 @@
 package nl.hypothermic.mfsrv.resources;
 
-import com.auth0.jwt.internal.com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-
 import io.javalin.Context;
 import io.javalin.Handler;
 import io.javalin.Javalin;
 import nl.hypothermic.mfsrv.MFServer;
+import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.obj.event.Event;
 import nl.hypothermic.mfsrv.obj.event.EventType;
 import nl.hypothermic.mfsrv.obj.event.InvalidEventTypeException;
-import nl.hypothermic.mfsrv.obj.event.MeefietsEvent;
 
 public class EventResource implements IResource {
 
@@ -59,6 +57,27 @@ public class EventResource implements IResource {
 						ctx.result("-2");
 					} catch (InvalidEventTypeException iete) {
 						ctx.result("-6");
+					}
+				}
+			}
+		});
+		instance.get("/event/adduser", new Handler() {
+			@Override public void handle(Context ctx) throws Exception {
+				if (ctx.queryParam("token") == null || ctx.queryParam("id") == null 
+					|| ctx.queryParam("targetcountry") == null || ctx.queryParam("targetnum") == null) {
+					ctx.result("-1");
+				} else {
+					try {
+						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
+							ctx.result(server.database.addUserEvent(Integer.valueOf(ctx.queryParam("id")),
+									                                new TelephoneNum(Integer.valueOf(ctx.queryParam("targetcountry")),
+		                                                            Integer.valueOf(ctx.queryParam("targetnum"))))
+									   + "");
+						} else {
+							ctx.result("-9");
+						}
+					} catch (NumberFormatException | NullPointerException x) {
+						ctx.result("-2");
 					}
 				}
 			}

@@ -6,8 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 
 import nl.hypothermic.mfsrv.MFServer;
 import nl.hypothermic.mfsrv.obj.NetArrayList;
@@ -109,7 +107,7 @@ public class SQLiteDatabase implements IDatabaseHandler {
 		return 0;
 	}
 
-	@Override public ArrayList<Integer> getUserEvents(Account acc) {
+	@Override public NetArrayList<Integer> getUserEvents(TelephoneNum num) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -130,6 +128,16 @@ public class SQLiteDatabase implements IDatabaseHandler {
 	}
 
 	@Override public int deleteContact(TelephoneNum num, TelephoneNum dest) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override public int addUserEvent(int eventId, TelephoneNum dest) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override public int deleteUserEvent(int eventId, TelephoneNum dest) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
