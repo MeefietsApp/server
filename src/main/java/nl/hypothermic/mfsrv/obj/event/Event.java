@@ -62,4 +62,8 @@ public abstract class Event implements Serializable {
 	public String toSerializedString() throws IOException {
 		return FileIO.serializeToString(this);
 	}
+
+	@Override public String toString() {
+		return "Event [eventId=" + this.eventId + "]";
+	}
 }

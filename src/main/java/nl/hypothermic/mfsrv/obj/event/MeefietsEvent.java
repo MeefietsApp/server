@@ -33,4 +33,8 @@ public class MeefietsEvent extends Event {
 	@Override public MeefietsEvent sanitize() {
 		return new MeefietsEvent();
 	}
+
+	@Override public String toString() {
+		return "MeefietsEvent [eventName=" + this.eventName + ", eventLocation=" + this.eventLocation + ", eventEpochTime=" + this.eventEpochTime + "]";
+	}
 }
