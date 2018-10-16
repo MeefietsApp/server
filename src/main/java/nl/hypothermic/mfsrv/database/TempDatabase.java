@@ -311,7 +311,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 		try {
 			FileIO.serialize(record, event);
-			return 1;
+			return id;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return -6;
