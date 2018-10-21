@@ -391,6 +391,12 @@ public class TempDatabase implements IDatabaseHandler {
 
 	@Override public int addContact(TelephoneNum num, TelephoneNum dest) {
 		NetArrayList<TelephoneNum> contacts = this.getContacts(num);
+		for (Iterator<TelephoneNum> it = contacts.iterator(); it.hasNext(); ) {
+		    TelephoneNum iter = it.next();
+		    if (iter.country == dest.country && iter.number == dest.number) {
+				return -7;
+			}
+		}
 		contacts.add(dest);
 		try {
 			FileIO.serialize(new File(dbPath, num.country + "/" + num.number + ".ctl"), contacts);
