@@ -94,6 +94,23 @@ public class MFServer {
 		        	sslConnector.setHost(ConfigHandler.instance.getStringOrCrash("srv_address"));
 		            sslConnector.setPort(port);
 		            server.addConnector(sslConnector);
+		            
+		            // Ik ben vier uur aan het debuggen geweest waarom ik de HTTPS poort niet kon bereiken
+		            // vanaf het internet. Geen error messages. Alle kritieke punten onderzocht.
+		            //
+		            // Het bleek dus dat UFW poort 7443 nog dicht had staan.
+		            //
+		            // Ik laat deze debug switch er voor de komende tijd nog wel in staan omdat Javalin
+		            // geen error messages geeft.
+		            try {
+		            	if (Boolean.valueOf(ConfigHandler.instance.getString("https_debug", "false"))) {
+		            		MFLogger.log(this, "Debugging HTTPS, might be unstable. Do not use in production!");
+		            		server.start();
+		            	}
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+		            
 		            MFLogger.log(this, "HTTPS ingeschakeld op " + sslConnector.getPort());
 			    }
 			    
