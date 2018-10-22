@@ -42,4 +42,13 @@ public class ConfigHandler {
 			throw new RuntimeException("Could not retrieve key: " + key);
 		}
 	}
+	
+	// alleen om de code iets netter te maken...
+	public int getIntegerOrCrash(String key) {
+		try {
+		return Integer.valueOf(this.getStringOrCrash(key));
+		} catch (NumberFormatException nfe) {
+			throw new RuntimeException("Value for \"" + key + "\" is NaN.");
+		}
+	}
 }

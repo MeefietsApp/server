@@ -8,9 +8,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import org.apache.commons.codec.DecoderException;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import io.javalin.Javalin;
 import nl.hypothermic.api.NexmoHooks;
@@ -27,7 +34,7 @@ import nl.hypothermic.mfsrv.resources.IResource;
 
 public class MFServer {
 
-	public static final double SERVER_VERSION = 1.02;
+	public static final double SERVER_VERSION = 1.04;
 	public static final long SESSION_TIMEOUT = 300000; // ms
 
 	private final Javalin instance;
@@ -57,12 +64,39 @@ public class MFServer {
 		instance = Javalin.create().server(new Supplier<Server>() {
 			@Override public Server get() {
 			    Server server = new Server();
-			    ServerConnector serverConnector = new ServerConnector(server);
-			    serverConnector.setHost(ConfigHandler.instance.getStringOrCrash("srv_address"));
-			    serverConnector.setPort(Integer.valueOf(ConfigHandler.instance.getStringOrCrash("srv_port")));
-			    server.setConnectors(new Connector[]{
-			    		serverConnector
-			    });
+			    
+			    if (Boolean.valueOf(ConfigHandler.instance.getStringOrCrash("http_enable"))) {
+			    	ServerConnector httpConnector = new ServerConnector(server);
+			    	httpConnector.setHost(ConfigHandler.instance.getStringOrCrash("srv_address"));
+			    	httpConnector.setPort(ConfigHandler.instance.getIntegerOrCrash("http_port"));
+			    	
+			    	server.addConnector(httpConnector);
+			    	MFLogger.log(this, "HTTP ingeschakeld op " + httpConnector.getPort());
+			    }
+			    
+			    if (Boolean.valueOf(ConfigHandler.instance.getStringOrCrash("https_enable"))) {
+			    	int port = ConfigHandler.instance.getIntegerOrCrash("https_port");
+			    	
+			    	HttpConfiguration http_config = new HttpConfiguration();
+			        http_config.setSecureScheme("https");
+			        http_config.setSecurePort(port);
+			        
+			    	SslContextFactory sslContextFactory = new SslContextFactory();
+		        	sslContextFactory.setKeyStorePath(ConfigHandler.instance.getStringOrCrash("https_keystore_path"));
+		        	sslContextFactory.setKeyStorePassword(ConfigHandler.instance.getStringOrCrash("https_keystore_password"));
+		        	
+		        	HttpConfiguration https_config = new HttpConfiguration(http_config);
+		            https_config.addCustomizer(new SecureRequestCustomizer());
+		        	
+		        	ServerConnector sslConnector = new ServerConnector(server,
+		        			new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+		        			new HttpConnectionFactory(https_config));
+		        	sslConnector.setHost(ConfigHandler.instance.getStringOrCrash("srv_address"));
+		            sslConnector.setPort(port);
+		            server.addConnector(sslConnector);
+		            MFLogger.log(this, "HTTPS ingeschakeld op " + sslConnector.getPort());
+			    }
+			    
 			    return server;
 			}
 		});
@@ -88,7 +122,7 @@ public class MFServer {
 		MFLogger.log(this, "Database aan het laden...");
 		database.eventServletStart();
 		MFLogger.log(this, "REST-server starten...");
-		instance.start(Integer.valueOf(ConfigHandler.instance.getStringOrCrash("srv_port")));
+		instance.start();
 		for (IResource iter : resources) {
 			iter.registerResource(instance);
 		}
