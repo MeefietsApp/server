@@ -366,6 +366,12 @@ public class TempDatabase implements IDatabaseHandler {
 		    	return 1;
 		    }
 		}
+		try {
+			FileIO.serialize(new File(dbPath, dest.country + "/" + dest.number + ".etl"), events);
+		} catch (IOException x) {
+			x.printStackTrace();
+			return -7;
+		}
 		return 0;
 	}
 

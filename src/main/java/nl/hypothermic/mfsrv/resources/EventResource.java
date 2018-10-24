@@ -82,5 +82,28 @@ public class EventResource implements IResource {
 				}
 			}
 		});
+		instance.get("/event/deluser", new Handler() {
+			@Override public void handle(Context ctx) throws Exception {
+				if (ctx.queryParam("token") == null || ctx.queryParam("id") == null
+					// Gebruikers kunnen alleen hun eigen user-event-entry verwijderen (dus geen target* params)
+					|| ctx.queryParam("country") == null || ctx.queryParam("num") == null) {
+					ctx.result("-1");
+				} else {
+					try {
+						TelephoneNum user = new TelephoneNum(Integer.valueOf(ctx.queryParam("country")),
+	                                                         Integer.valueOf(ctx.queryParam("num")));
+						if (server.database.isSessionTokenValid(user, Integer.valueOf(ctx.queryParam("token")))) {
+							ctx.result(server.database.deleteUserEvent(Integer.valueOf(ctx.queryParam("id")), 
+									                                   user)
+									   + "");
+						} else {
+							ctx.result("-9");
+						}
+					} catch (NumberFormatException | NullPointerException x) {
+						ctx.result("-2");
+					}
+				}
+			}
+		});
 	}
 }
