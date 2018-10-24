@@ -87,3 +87,57 @@ Als een endpoint niet staat beschreven in deze gids, gebruik de standaard respon
 |  -7  | Interne fout: error creating new instance |
 |  -8  | Interne fout: invalid event type |
 |  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /event/adduser
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Id niet gevonden |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -6  | Gebruiker is al toegevoegd aan evenement. |
+|  -7  | Interne fout: serialization error |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /event/deluser
+// TODO
+
+### /account/events/get
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Records niet gevonden |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /account/contacts/get
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Interne fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /account/contacts/add
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Interne fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -6  | Interne fout: serialization error |
+|  -7  | Gebruiker is al een contact van <nummer> |
+|  -9  | Authenticatiefout of niet genoeg permissies |
+
+### /account/contacts/delete
+| Code | Omschrijving |
+| ---- | ------------ |
+|   1  | Success |
+|   0  | Interne fout |
+|  -1  | Niet genoeg argumenten |
+|  -2  | Argumenten onjuist geformatteerd |
+|  -3  | Geen records gevonden |
+|  -6  | Interne fout: serialization error |
+|  -9  | Authenticatiefout of niet genoeg permissies |
