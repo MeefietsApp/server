@@ -358,19 +358,23 @@ public class TempDatabase implements IDatabaseHandler {
 	}
 	
 	@Override public int deleteUserEvent(int eventId, TelephoneNum dest) {
+		boolean res = false;
 		NetArrayList<Integer> events = this.getUserEvents(dest);
 		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
 		    Integer iter = it.next();
 		    if (iter != null && iter == eventId) {
 		    	it.remove();
-		    	return 1;
+		    	res = true;
 		    }
 		}
-		try {
-			FileIO.serialize(new File(dbPath, dest.country + "/" + dest.number + ".etl"), events);
-		} catch (IOException x) {
-			x.printStackTrace();
-			return -7;
+		if (res) {
+			try {
+				FileIO.serialize(new File(dbPath, dest.country + "/" + dest.number + ".etl"), events);
+				return 1;
+			} catch (IOException x) {
+				x.printStackTrace();
+				return -7;
+			}
 		}
 		return 0;
 	}
