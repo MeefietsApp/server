@@ -268,7 +268,9 @@ public class TempDatabase implements IDatabaseHandler {
 		File record = new File(dbPath, "events/" + eventId + ".evt");
 		if (record.exists()) {
 			try {
-				return (Event) FileIO.deserialize(record);
+				Event e = (Event) FileIO.deserialize(record);
+				e.eventId = eventId;
+				return e;
 			} catch (Exception x) {
 				x.printStackTrace();
 			}
