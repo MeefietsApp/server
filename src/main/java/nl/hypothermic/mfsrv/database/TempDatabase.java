@@ -47,7 +47,7 @@ public class TempDatabase implements IDatabaseHandler {
 	public int getNextEventId() {
 		int id = 0;
 		try {
-			id = Integer.valueOf(FileIO.readFileContents(eventCounter));
+			id = Integer.valueOf(FileIO.readFileContents(eventCounter).trim());
 			FileIO.writeFileContents(eventCounter, (id + 1) + "");
 		} catch (Exception x) {
 			// TODO Auto-generated catch block
@@ -309,6 +309,7 @@ public class TempDatabase implements IDatabaseHandler {
 		if (record.exists()) {
 			MFLogger.err(this, "critical: trying to register event " + id + " which already exists!");
 		}
+		event.eventId = id;
 		try {
 			FileIO.serialize(record, event);
 			return id;
