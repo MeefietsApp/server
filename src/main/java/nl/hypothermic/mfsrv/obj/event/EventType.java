@@ -2,7 +2,8 @@ package nl.hypothermic.mfsrv.obj.event;
 
 public enum EventType {
 	
-	MEEFIETSEVENT(MeefietsEvent.class);
+	MEEFIETSEVENT(MeefietsEvent.class),
+	PARTICIPATABLEME(ParticipatableMeefietsEvent.class);
 	
 	private Class<? extends Event> cl;
 	
@@ -18,6 +19,8 @@ public enum EventType {
 		switch (type) {
 		case 1:
 			return EventType.MEEFIETSEVENT;
+		case 2:
+			return EventType.PARTICIPATABLEME;
 		}
 		throw new InvalidEventTypeException();
 	}
