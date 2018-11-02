@@ -30,7 +30,9 @@ public abstract class Event implements Serializable {
 	public abstract Event fromJavalinCtx(Context ctx) throws InstantiationException, IllegalAccessException, NumberFormatException;
 	
 	private static Event castFromObject(Object obj) throws ClassNotFoundException {
-		if (obj instanceof MeefietsEvent) {
+		if (obj instanceof ParticipatableMeefietsEvent) {
+			return (ParticipatableMeefietsEvent) obj;
+		} else if (obj instanceof MeefietsEvent) {
 			return (MeefietsEvent) obj;
 		} else if (obj instanceof Event) {
 			return (Event) obj;
