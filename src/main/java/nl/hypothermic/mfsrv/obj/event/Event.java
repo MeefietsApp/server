@@ -7,6 +7,7 @@ import java.io.Serializable;
 import org.apache.commons.codec.DecoderException;
 
 import io.javalin.Context;
+import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
 
@@ -50,8 +51,9 @@ public abstract class Event implements Serializable {
 	
 	public abstract Event sanitize();
 
+	@Deprecated // TODO: to be removed in 1.07
 	public void toFile() throws IOException {
-		// TODO fix hardcoded pad naar temp database!!!
+		MFLogger.err(this, "Warning: you are using a deprecated method which will be removed in 1.07: Event.toFile()");
 		this.toFile(new File(new File(ConfigHandler.dbPath, "temp/"), "" + ".mfevt"));
 	}
 
