@@ -25,7 +25,7 @@ public class EventResource implements IResource {
 				} else {
 					try {
 						if (server.database.isSessionTokenValid(null, Integer.valueOf(ctx.queryParam("token")))) {
-							Event event = server.database.getEvent(Integer.valueOf(ctx.queryParam("id")));
+							Event event = server.database.getEvent(Integer.valueOf(ctx.queryParam("id"))).getSanitized();
 							if (event != null) {
 								ctx.result("1" + event.toSerializedString());
 							} else {
