@@ -30,8 +30,19 @@ public class MeefietsEvent extends Event {
 		return eventName + "";
 	}
 
-	@Override public MeefietsEvent sanitize() {
-		return new MeefietsEvent();
+	@Override public void sanitize() {
+		// no-op omdat al deze info public is.
+	}
+	
+	@Override public MeefietsEvent getSanitized() {
+		try {
+			MeefietsEvent clone = (MeefietsEvent) this.clone();
+			clone.sanitize();
+			return clone;
+		} catch (CloneNotSupportedException x) {
+			x.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override public String toString() {

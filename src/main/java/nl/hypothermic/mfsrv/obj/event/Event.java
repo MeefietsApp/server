@@ -11,7 +11,7 @@ import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
 
-public abstract class Event implements Serializable {
+public abstract class Event implements Serializable, Cloneable {
 
 	static final long serialVersionUID = 1L;
 
@@ -51,7 +51,9 @@ public abstract class Event implements Serializable {
 		return eventId + "";
 	}
 	
-	public abstract Event sanitize();
+	public abstract void sanitize();
+	
+	public abstract Event getSanitized();
 
 	@Deprecated // TODO: to be removed in 1.07
 	public void toFile() throws IOException {

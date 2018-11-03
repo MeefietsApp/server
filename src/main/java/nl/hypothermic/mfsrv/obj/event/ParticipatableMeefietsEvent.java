@@ -34,8 +34,22 @@ public class ParticipatableMeefietsEvent extends MeefietsEvent {
 		return eventName + "";
 	}
 	
-	@Override public ParticipatableMeefietsEvent sanitize() {
-		return new ParticipatableMeefietsEvent();
+	@Override public void sanitize() {
+		if (this.isPrivate) {
+			this.participants = null;
+		}
+		super.sanitize();
+	}
+	
+	@Override public ParticipatableMeefietsEvent getSanitized() {
+		try {
+			ParticipatableMeefietsEvent clone = (ParticipatableMeefietsEvent) this.clone();
+			clone.sanitize();
+			return clone;
+		} catch (CloneNotSupportedException x) {
+			x.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override public int hashCode() {
