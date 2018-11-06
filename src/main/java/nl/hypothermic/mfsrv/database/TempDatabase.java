@@ -218,6 +218,7 @@ public class TempDatabase implements IDatabaseHandler {
 		if (num == null) {
 			for (SessionToken iter : sessionList.values()) {
 				if (iter.token == token) {
+					iter.resetTime();
 					return true;
 				}
 			}
