@@ -72,6 +72,17 @@ public class AccountResource implements IResource {
 						TelephoneNum target = new TelephoneNum(Integer.valueOf(ctx.queryParam("targetcountry")),
                                 							   Integer.valueOf(ctx.queryParam("targetnum")));
 						if (server.database.isSessionTokenValid(num, Integer.valueOf(ctx.queryParam("token")))) {
+							int pres = server.database.addContact(num, target);
+							if (pres == 1) {
+								int sres = server.database.addContact(target, num);
+								if (sres == 1) {
+									ctx.result("1");
+								} else {
+									ctx.result(sres + "");
+								}
+							} else {
+								ctx.result(pres + "");
+							}
 							ctx.result(server.database.addContact(num, target) + "");
 						} else {
 							ctx.result("-9");
