@@ -28,6 +28,7 @@ import nl.hypothermic.mfsrv.obj.auth.TelephoneNum;
 import nl.hypothermic.mfsrv.obj.auth.UnverifiedMapEntry;
 import nl.hypothermic.mfsrv.obj.event.Event;
 import nl.hypothermic.mfsrv.obj.event.EventType;
+import nl.hypothermic.mfsrv.obj.event.ParticipatableMeefietsEvent;
 
 public class TempDatabase implements IDatabaseHandler {
 
@@ -56,8 +57,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return id;
 	}
 
-	@Override
-	public void eventServletStart() {
+	@Override public void eventServletStart() {
 		eventPath.mkdirs();
 		if (!eventCounter.exists()) {
 			try {
@@ -70,8 +70,7 @@ public class TempDatabase implements IDatabaseHandler {
 			}
 		}
 		MFServer.threadpool.execute(new Runnable() {
-			@Override
-			public void run() {
+			@Override public void run() {
 				for (File country : dbPath.listFiles()) {
 					if (country.isDirectory()) {
 						if (country.getName().length() >= 1 && country.getName().matches("[0-9]+")) {
@@ -92,8 +91,7 @@ public class TempDatabase implements IDatabaseHandler {
 		});
 	}
 
-	@Override
-	public void eventServletStop() {
+	@Override public void eventServletStop() {
 		for (Map.Entry<TelephoneNum, String> record : userComboList.entrySet()) {
 			File recordFile = new File(new File(dbPath, record.getKey().country + "/"), record.getKey().number + "");
 			try {
@@ -108,11 +106,16 @@ public class TempDatabase implements IDatabaseHandler {
 			}
 		}
 	}
+	
+	private void requestModify() {
+		//session lock
+		/// modify
+		//session unlock
+	}
 
 	private HashMap<TelephoneNum, SessionToken> sessionList = new HashMap<TelephoneNum, SessionToken>();
 
-	@Override
-	public int userLogin(TelephoneNum num, String passwdHash) {
+	@Override public int userLogin(TelephoneNum num, String passwdHash) {
 		int i;
 		if ((i = isUserLoggedIn(num)) != 0) {
 			return i;
@@ -131,8 +134,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return token.token;
 	}
 
-	@Override
-	public int userRegister(TelephoneNum num, String passwdHash) {
+	@Override public int userRegister(TelephoneNum num, String passwdHash) {
 		if (isUserRegistered(num)) {
 			return -5;
 		}
@@ -152,8 +154,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return 1;
 	}
 
-	@Override
-	public int userVerify(TelephoneNum num, int verificationToken) {
+	@Override public int userVerify(TelephoneNum num, int verificationToken) {
 		for (Entry<TelephoneNum, Entry<String, Integer>> iter : unverifiedComboList.entrySet()) {
 			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
 				if (iter.getValue().getValue().equals(verificationToken)) {
@@ -168,8 +169,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return 0;
 	}
 
-	@Override
-	public boolean isUserRegistered(TelephoneNum num) {
+	@Override public boolean isUserRegistered(TelephoneNum num) {
 		for (TelephoneNum iter : userComboList.keySet()) {
 			if (iter.country == num.country && iter.number == num.number) {
 				return true;
@@ -187,8 +187,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return false;
 	}
 
-	@Override
-	public boolean isUserPassword(TelephoneNum num, String passwdHash) {
+	@Override public boolean isUserPassword(TelephoneNum num, String passwdHash) {
 		for (TelephoneNum iter : userComboList.keySet()) {
 			if (iter.country == num.country && iter.number == num.number) {
 				return userComboList.get(iter).replaceAll("\n", "").trim()
@@ -213,8 +212,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return 0;
 	}
 
-	@Override
-	public boolean isSessionTokenValid(TelephoneNum num, int token) {
+	@Override public boolean isSessionTokenValid(TelephoneNum num, int token) {
 		if (num == null) {
 			for (SessionToken iter : sessionList.values()) {
 				if (iter.token == token) {
@@ -234,8 +232,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return false;
 	}
 
-	@Override
-	public void resetSessionTimer(TelephoneNum num) {
+	@Override public void resetSessionTimer(TelephoneNum num) {
 		for (Entry<TelephoneNum, SessionToken> iter : sessionList.entrySet()) {
 			if (iter.getKey().country == num.country && iter.getKey().number == num.number) {
 				iter.getValue().resetTime();
@@ -243,8 +240,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 
-	@Override
-	public Account getAccount(TelephoneNum num) {
+	@Override public Account getAccount(TelephoneNum num) {
 		File record = new File(dbPath, num.country + "/" + num.number + ".acc");
 		if (record.exists()) {
 			try {
@@ -264,8 +260,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return null;
 	}
 
-	@Override
-	public Event getEvent(int eventId) {
+	@Override public Event getEvent(int eventId) {
 		File record = new File(dbPath, "events/" + eventId + ".evt");
 		if (record.exists()) {
 			try {
@@ -279,8 +274,7 @@ public class TempDatabase implements IDatabaseHandler {
 		return null;
 	}
 
-	@Override
-	public int createEvent(EventType type) {
+	@Override public int createEvent(EventType type) {
 		int id = getNextEventId();
 		File record = new File(dbPath, "events/" + id + ".evt");
 		if (record.exists()) {
@@ -305,8 +299,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 	
-	@Override
-	public int registerEvent(Event event) {
+	@Override public int registerEvent(Event event) {
 		int id = getNextEventId();
 		File record = new File(dbPath, "events/" + id + ".evt");
 		if (record.exists()) {
@@ -322,8 +315,7 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 
-	@Override
-	public NetArrayList<Integer> getUserEvents(TelephoneNum num) {
+	@Override public NetArrayList<Integer> getUserEvents(TelephoneNum num) {
 		File record = new File(dbPath, num.country + "/" + num.number + ".etl");
 		if (record.exists()) {
 			try {
@@ -439,5 +431,83 @@ public class TempDatabase implements IDatabaseHandler {
 			x.printStackTrace();
 		}
 		return -6;
+	}
+	
+	@Override public int eventIsParticipated(int eventId, TelephoneNum num) {
+		NetArrayList<Integer> events = this.getUserEvents(num);
+		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
+		    Integer iter = it.next();
+		    if (iter != null && iter == eventId) {
+		    	Event e = this.getEvent(iter);
+		    	if (e instanceof ParticipatableMeefietsEvent) {
+		    		for (TelephoneNum iter2 : ((ParticipatableMeefietsEvent) e).participants) {
+		    			if (iter2 != null && iter2.country == num.country && iter2.number == num.number) {
+		    				return 1;
+		    			}
+		    		}
+		    	} else {
+		    		return -5;
+		    	}
+		    }
+		}
+		return 0;
+	}
+
+	@Override public int eventParticipate(int eventId, TelephoneNum num) {
+		NetArrayList<Integer> events = this.getUserEvents(num);
+		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
+		    Integer iter = it.next();
+		    if (iter != null && iter == eventId) {
+		    	Event e = this.getEvent(iter);
+		    	if (e instanceof ParticipatableMeefietsEvent) {
+		    		if (!((ParticipatableMeefietsEvent) e).isPrivate) {
+		    			for (TelephoneNum iter2 : ((ParticipatableMeefietsEvent) e).participants) {
+		    				if (iter2 != null && iter2.country == num.country && iter2.number == num.number) {
+		    					return -1;
+		    				}
+		    			}
+		    			((ParticipatableMeefietsEvent) e).participants.add(num);
+		    			try {
+		    				FileIO.serialize(new File(dbPath, "events/" + e.eventId + ".evt"), e);
+		    				return 1;
+		    			} catch (IOException x) {
+		    				x.printStackTrace();
+		    				return -6;
+		    			}
+		    		}
+		    		return -2;
+		    	}
+		    	return -5;
+		    }
+		}
+		return 0;
+	}
+
+	@Override public int eventUnparticipate(int eventId, TelephoneNum num) {
+		NetArrayList<Integer> events = this.getUserEvents(num);
+		for (Iterator<Integer> it = events.iterator(); it.hasNext(); ) {
+		    Integer iter = it.next();
+		    if (iter != null && iter == eventId) {
+		    	Event e = this.getEvent(iter);
+		    	if (e instanceof ParticipatableMeefietsEvent) {
+		    		for (Iterator<TelephoneNum> it2 = ((ParticipatableMeefietsEvent) e).participants.iterator(); it2.hasNext(); ) {
+		    		    TelephoneNum iter2 = it2.next();
+		    		    if (iter2.country == num.country && iter2.number == num.number) {
+		    				it2.remove();
+		    				try {
+			    				FileIO.serialize(new File(dbPath, "events/" + e.eventId + ".evt"), e);
+			    				return 1;
+			    			} catch (IOException x) {
+			    				x.printStackTrace();
+			    				return -6;
+			    			}
+		    			}
+		    		}
+		    		return -1;
+		    	}
+		    	return -5;
+		    }
+		}
+		return 0;
 	}
 }

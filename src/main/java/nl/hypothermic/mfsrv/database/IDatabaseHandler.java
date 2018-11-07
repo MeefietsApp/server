@@ -10,7 +10,7 @@ import nl.hypothermic.mfsrv.obj.event.EventType;
 
 public interface IDatabaseHandler {
 	
-	// --- Events
+	// --- System calls
 	
 	public void eventServletStart() throws Exception;
 	
@@ -55,5 +55,11 @@ public interface IDatabaseHandler {
 	public int registerEvent(Event event);
 	
 	public NetArrayList<Integer> getUserEvents(TelephoneNum num);
+	
+	public int eventIsParticipated(int eventId, TelephoneNum num);
+	
+	public int eventParticipate(int eventId, TelephoneNum num);
+	
+	public int eventUnparticipate(int eventId, TelephoneNum num);
 
 }

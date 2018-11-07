@@ -141,4 +141,19 @@ public class SQLiteDatabase implements IDatabaseHandler {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override public int eventIsParticipated(int eventId, TelephoneNum num) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override public int eventParticipate(int eventId, TelephoneNum num) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override public int eventUnparticipate(int eventId, TelephoneNum num) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
