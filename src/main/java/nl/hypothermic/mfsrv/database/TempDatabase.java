@@ -1,15 +1,10 @@
 package nl.hypothermic.mfsrv.database;
 
-import static java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE;
-import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
-import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
-import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
-import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
+import static java.nio.file.attribute.PosixFilePermission.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import nl.hypothermic.mfsrv.MFLogger;
 import nl.hypothermic.mfsrv.MFServer;
+import nl.hypothermic.mfsrv.async.ModifyCallback;
 import nl.hypothermic.mfsrv.config.ConfigHandler;
 import nl.hypothermic.mfsrv.config.FileIO;
 import nl.hypothermic.mfsrv.obj.NetArrayList;
@@ -107,10 +103,40 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 	
-	private void requestModify() {
-		//session lock
-		/// modify
-		//session unlock
+	private void requestModify(Event e, ModifyCallback cb) throws IOException {
+		this.requestModify(new File(dbPath, "events/" + e.eventId + ".evt"), cb);
+	}
+	
+	private void requestModify(int eventId, ModifyCallback cb) throws IOException {
+		this.requestModify(new File(dbPath, "events/" + eventId + ".evt"), cb);
+	}
+	
+	/* Veilige async data modificatie
+	 * 1. session lock
+	 * 2. modify
+	 * 3. session unlock
+	 */
+	private void requestModify(File f, ModifyCallback cb) throws IOException {
+		File lock = new File(f.getAbsolutePath() + ".lck");
+		int wait = 0;
+		// wacht max. ~2sec
+		while (lock.exists()) {
+			if (wait > 100) {
+				System.out.println("Waiting for session lock " + lock.getAbsolutePath() + " took too long, not propagating changes.");
+				return;
+			} else {
+				wait++;
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException x) {
+					// TODO Auto-generated catch block
+					x.printStackTrace();
+				}
+			}
+		}
+		lock.createNewFile();
+		cb.onAction();
+		lock.delete();
 	}
 
 	private HashMap<TelephoneNum, SessionToken> sessionList = new HashMap<TelephoneNum, SessionToken>();
