@@ -1,6 +1,7 @@
 package nl.hypothermic.mfsrv.obj.event;
 
 import io.javalin.Context;
+import nl.hypothermic.mfsrv.util.UserInputCleaner;
 
 public class MeefietsEvent extends Event {
 	
@@ -12,7 +13,7 @@ public class MeefietsEvent extends Event {
 		}
 		eventName = ctx.queryParam("name");
 		eventLocation = ctx.queryParam("loc");
-		eventEpochTime = Long.parseLong(ctx.queryParam("time"));
+		eventEpochTime = UserInputCleaner.formatTime(Long.parseLong(ctx.queryParam("time")));
 		return this;
 	}
 	
