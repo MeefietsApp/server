@@ -103,6 +103,10 @@ public class TempDatabase implements IDatabaseHandler {
 		}
 	}
 	
+	private void requestModify(TelephoneNum num, ModifyCallback cb) throws IOException {
+		this.requestModify(new File(dbPath, num.country + "/" + num.number + ".ctl"), cb);
+	}
+	
 	private void requestModify(Event e, ModifyCallback cb) throws IOException {
 		this.requestModify(new File(dbPath, "events/" + e.eventId + ".evt"), cb);
 	}
